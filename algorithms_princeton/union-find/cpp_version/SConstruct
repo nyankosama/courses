@@ -1,0 +1,7 @@
+srcDir = './'
+
+env = Environment(CCFLAGS='-std=c++0x -g')
+
+env.Program(target = 'testPercolation',
+        source = Glob(srcDir + "*.cpp"),
+        CPPPATH = srcDir)
