@@ -50,12 +50,12 @@ class Percolation{
 template<int GIRD_NUM>
 class PercolationStat{
     public:
-        PercolationStat(int t);
+        PercolationStat(int t):_time(t){}
+        void doStat();
         void report();
     private:
         int _time;
         vector<double> _fraction_list;
-
         void doPercolate();
 };
 

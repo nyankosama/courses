@@ -2,6 +2,7 @@
 #include "percolation.cpp"
 
 int main(){
-    PercolationStat<500> pc(10);
+    PercolationStat<1500> pc(10);
+    pc.doStat();
     pc.report();
 }

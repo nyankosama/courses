@@ -38,8 +38,9 @@ void Percolation<GIRD_NUM>::add_union(int row, int column, int ox, int oy){
     }
 }
 
+
 template<int GIRD_NUM>
-PercolationStat<GIRD_NUM>::PercolationStat(int t):_time(t){
+void PercolationStat<GIRD_NUM>::doStat(){
     doPercolate();
 }
 
