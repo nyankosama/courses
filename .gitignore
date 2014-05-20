@@ -4,3 +4,6 @@
 #scons
 .sconsign.dblite
 
+#vim swp files
+*.swp
+

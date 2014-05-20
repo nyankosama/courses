@@ -1,0 +1,2 @@
+env = Environment(CCFLAGS='-std=c++0x -g', CPPPATH='./')
+env.Program(target = 'main', source = './main.cpp')
