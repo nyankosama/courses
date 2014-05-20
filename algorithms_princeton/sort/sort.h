@@ -54,4 +54,37 @@ template<class T>
         }
     }
 
+template<class T>
+    void _merge(T t[], int lo, int mid, int hi, int aux[]){ 
+        int i = lo;
+        int j = mid + 1;
+        for (int k = lo; k <= hi; k++){
+            aux[k] = t[k];
+        }
+
+        for (int k = lo; k <= hi; k++){
+            if (i > mid) t[k] = aux[j++];
+            else if(j > hi) t[k] = aux[i++];
+            else if(less(aux[i], aux[j])) t[k] = aux[i++];
+            else t[k] = aux[j++];
+        }
+    } 
+
+template<class T>
+    void _mergeSort(T t[], int lo, int hi, int aux[]){
+        if (lo >= hi) return;
+        int mid = lo + (hi - lo)/2;
+        _mergeSort(t, lo, mid, aux);
+        _mergeSort(t, mid+1, hi, aux);
+        _merge(t, lo, mid, hi, aux);
+    }
+
+template<class T>
+    void mergeSort(T t[], int size){
+        int* aux = new int[size];
+        _mergeSort(t, 0, size-1, aux);
+        delete aux;
+    }
+
+
 #endif

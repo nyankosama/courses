@@ -12,7 +12,6 @@
 #include <iostream>
 #include <random>
 #include <functional>
-#include <cstring>
 #include "sort.h"
 #include "base.h"
 
@@ -22,12 +21,6 @@
 
 using namespace std;
 
-
-int* copyArray(int* p, int size){
-    int* dest = new int[size];
-    memcpy(dest, p, size);
-    return dest;
-}
 
 int main(){
     default_random_engine generator;
@@ -41,6 +34,7 @@ int main(){
     sortCompare(shellSort, copyArray(num, SORT_SIZE), SORT_SIZE, SORT_NUM);
     cout << "insertSort" << endl;
     sortCompare(insertSort,copyArray(num, SORT_SIZE), SORT_SIZE, SORT_NUM);
-    cout << "selectionSort" << endl;
-    sortCompare(selectionSort, copyArray(num, SORT_SIZE), SORT_SIZE, SORT_NUM);
+    cout << "mergesort" << endl;
+    sortCompare(mergeSort,copyArray(num, SORT_SIZE), SORT_SIZE, SORT_NUM);
+
 }

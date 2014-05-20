@@ -15,6 +15,7 @@
 #include <iostream>
 #include <time.h>
 #include <sys/time.h>
+#include <cstring>
 
 
 #define show(array) _show(array, array_size(array))
@@ -22,6 +23,12 @@
 
 template <class T>
 using sortFunction = void(T t[], int size);
+
+int* copyArray(int* p, int size){
+    int* dest = new int[size];
+    memcpy(dest, p, size);
+    return dest;
+}
 
 long getCurrentTime(){
     struct timeval tv;
@@ -65,15 +72,18 @@ bool _isSorted(T t[], int size){
 template<class T>
 void sortCompare(sortFunction<T> func, T t[], int size, int sortNum){
     long time_sum = 0;
+    int* sorted = NULL;
     for (int i=0; i<sortNum; i++){
         long begin_time = getCurrentTime(); 
-        func(t, size);
+        sorted = copyArray(t, size);
+        func(sorted, size);
         long end_time = getCurrentTime();
         time_sum += (end_time - begin_time);
     }
     std::cout << "total_time:" << time_sum << "ms" << std::endl;
     long avg_time = time_sum / sortNum;
     std::cout << "avg_time:" << avg_time << "ms" << std::endl;
+    if (!_isSorted(sorted, size)) std::cout << "error, sort method bug!" << std::endl;
 }
 
 
