@@ -15,9 +15,10 @@
 #include "sort.h"
 #include "base.h"
 
-#define MAX_INT 10000000
-#define SORT_SIZE 10000
-#define SORT_NUM 50
+const int MAX_INT = 10000000;
+const int SORT_SIZE = 10000;
+const int SORT_NUM = 50;
+
 
 using namespace std;
 
