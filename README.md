@@ -1,1 +1,3 @@
-###Some course assignments here
+###Course assignments and exercises
+
+- coursera algorithm practice
