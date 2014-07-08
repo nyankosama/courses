@@ -1,0 +1,12 @@
+env = Environment(CCFLAGS = '-g')
+
+mainSrc = Glob("*.cpp")
+for src in mainSrc:
+    print str(src)
+    srcName = str(src)
+    targetName = srcName[0 : srcName.index('.cpp')] 
+    env.Program(
+            target = targetName,
+            source = srcName,
+            CPPPATH = '../'
+            )
