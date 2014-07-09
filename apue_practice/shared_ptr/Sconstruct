@@ -1,4 +1,4 @@
-env = Environment(CCFLAGS = '-g')
+env = Environment(CCFLAGS = '-std=c++0x -g -p -Wall -O0')
 
 mainSrc = Glob("*.cpp")
 for src in mainSrc:
