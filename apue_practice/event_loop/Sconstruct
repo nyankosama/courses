@@ -1,11 +1,13 @@
 env = Environment(CCFLAGS = '-std=c++0x -g -p -Wall -O0')
 
-mainSrc = Glob("*.cpp")
-for src in mainSrc:
-    srcName = str(src)
-    targetName = srcName[0 : srcName.index('.cpp')]
-    env.Program(
-            target = targetName,
-            source = srcName,
-            CPPPATH = '../'
-            )
+env.Program(
+    target = "server",
+    source = ["server.cpp", "EventLoop.cpp"],
+    LIBS = "pthread"
+)
+
+env.Program(
+    target = "client",
+    source = "client.cpp",
+    LIBS = "pthread"
+)
