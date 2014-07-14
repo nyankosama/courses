@@ -1,6 +1,7 @@
 #include <iostream>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <string.h>
 #include "EventLoop.h"
 #include "Singleton.h"
 
@@ -9,16 +10,13 @@ EventLoopMgr::EventLoopMgr() {
     efd_ = epoll_create(1);
 }
 
-EventLoopMgr::~EventLoopMgr(){
+EventLoopMgr::~EventLoopMgr() {
     delete events_;
 }
 
 void EventLoopMgr::handleEvent() {
     int n;
-    std::cout << "EPOLL_WAIT begins" << std::endl;
     n = epoll_wait(efd_, events_, MAX_EVENTS, -1);
-    std::cout << "EPOLL_WAIT return" << std::endl;
-    std::cout << "EPOLL_RETURN_N = " << n << std::endl;
     for (int i = 0; i < n; i++) {
         if ((events_[i].events & EPOLLERR) ||
                 (events_[i].events & EPOLLHUP) ||
@@ -27,10 +25,9 @@ void EventLoopMgr::handleEvent() {
             abort();
         }
 
-        std::shared_ptr<EventHandler> handler = handlerTable_[events_[i].data.fd]; 
+        std::shared_ptr<EventHandler> handler = handlerTable_[events_[i].data.fd];
         handler->handleEvent(EVENT_READ);
     }
-    std::cout << "EPOLL_WAIT complete" << std::endl;
 }
 
 void EventLoopMgr::registerHandler(std::shared_ptr<EventHandler>& handler) {
@@ -62,13 +59,11 @@ std::shared_ptr<EventHandler> EventHandlerFactory::createHandler(HandlerType typ
 }
 
 void SocketAcceptor::handleEvent(EventType type) {
-    std::cout << "acceptor EPOLLIN" << std::endl;
     struct sockaddr clientAddr;
     socklen_t len = sizeof(clientAddr);
     int clientfd;
 
     clientfd = accept(sockfd_, &clientAddr, &len);
-    std::cout << "client sockfd=" << clientfd << std::endl;
     int ret = makeSocketNonBlocking(clientfd);
     if (ret == -1) {
         std::cerr << "set non-blocking error!" << std::endl;
@@ -77,31 +72,28 @@ void SocketAcceptor::handleEvent(EventType type) {
 
     std::shared_ptr<EventHandler> handler = Singleton<EventHandlerFactory>::instance().createHandler(ECHO_HANDLER, clientfd);
     Singleton<EventLoopMgr>::instance().registerHandler(handler);
-    std::cout << "acceptor EPOLLIN complete!" << std::endl;
 }
 
 void EchoHandler::handleEvent(EventType type) {
-    std::cout << "echo EPOLLIN" << std::endl;
     int n = 0;
     char buf[512];
-    std::cout << "sockfd_ = " << sockfd_ << std::endl;
-    while ((n = read(sockfd_, buf, sizeof(buf)) != 0)) {
+    while ((n = read(sockfd_, buf, sizeof(buf))) != 0) {
+        if (n == -1) {
+            if (errno == EAGAIN) {
+                break;
+            }
+            std::cerr << "echo read error! err=" << strerror(errno) << std::endl;
+            abort();
+        }
         int ret = write(sockfd_, buf, n);
         if (ret == -1) {
-            std::cerr << "echo write error!" << std::endl;
+            std::cerr << "echo write error! err=" << strerror(errno) <<std::endl;
             abort();
         }
     }
 
-    if (n == -1) {
-        std::cerr << "echo read error!" << std::endl;
-        abort();
-    }
-    
-    std::cout << "echo EPOLLIN complete" << std::endl;
-    Singleton<EventLoopMgr>::instance().removeHandler(sockfd_);
     close(sockfd_);
-    std::cout << "echo EPOLLIN closed" << std::endl;
+    Singleton<EventLoopMgr>::instance().removeHandler(sockfd_);
 }
 
 int makeSocketNonBlocking(int sfd) {
@@ -122,3 +114,4 @@ int makeSocketNonBlocking(int sfd) {
 
     return 0;
 }
+
