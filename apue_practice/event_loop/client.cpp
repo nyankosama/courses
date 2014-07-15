@@ -5,6 +5,7 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <iostream>
 
 int main() {
     int sockfd;
@@ -12,6 +13,7 @@ int main() {
     struct sockaddr_in address;
     int result;
     char ch = 'A';
+    char rd = '\0';
 
     address.sin_family = AF_INET;
     address.sin_addr.s_addr = inet_addr("127.0.0.1");
@@ -27,8 +29,10 @@ int main() {
     }
 
     write(sockfd, &ch, 1);
-    read(sockfd, &ch, 1);
-    printf("char from server = %c\n", ch);
+    std::cout << "waiting read" << std::endl;
+    read(sockfd, &rd, 1);
+    std::cout << "read complete!" << std::endl;
+    printf("char from server = %c\n", rd);
     close(sockfd);
 
     return 0;
