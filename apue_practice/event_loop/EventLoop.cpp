@@ -5,6 +5,8 @@
 #include "EventLoop.h"
 #include "Singleton.h"
 
+int EventHandler::count = 0;
+
 EventLoopMgr::EventLoopMgr() {
     events_ = new epoll_event[MAX_EVENTS];
     efd_ = epoll_create(1);
@@ -17,6 +19,10 @@ EventLoopMgr::~EventLoopMgr() {
 void EventLoopMgr::handleEvent() {
     int n;
     n = epoll_wait(efd_, events_, MAX_EVENTS, -1);
+    if (n == 0){
+        std::cerr << "return with 0" << std::endl;
+        abort();
+    }
     for (int i = 0; i < n; i++) {
         if ((events_[i].events & EPOLLERR) ||
                 (events_[i].events & EPOLLHUP) ||
@@ -64,6 +70,7 @@ void SocketAcceptor::handleEvent(EventType type) {
     int clientfd;
 
     clientfd = accept(sockfd_, &clientAddr, &len);
+    //std::cout << "receive connect, id = " << clientfd << std::endl;
     int ret = makeSocketNonBlocking(clientfd);
     if (ret == -1) {
         std::cerr << "set non-blocking error!" << std::endl;
@@ -85,6 +92,7 @@ void EchoHandler::handleEvent(EventType type) {
             std::cerr << "echo read error! err=" << strerror(errno) << std::endl;
             abort();
         }
+        std::cout << "receive from client, msg=" << buf << std::endl;
         int ret = write(sockfd_, buf, n);
         if (ret == -1) {
             std::cerr << "echo write error! err=" << strerror(errno) <<std::endl;
@@ -94,6 +102,8 @@ void EchoHandler::handleEvent(EventType type) {
 
     close(sockfd_);
     Singleton<EventLoopMgr>::instance().removeHandler(sockfd_);
+    EventHandler::count ++;
+    std::cout << "complete request " << EventHandler::count << std::endl;
 }
 
 int makeSocketNonBlocking(int sfd) {

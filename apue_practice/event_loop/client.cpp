@@ -19,21 +19,22 @@ int main() {
     address.sin_addr.s_addr = inet_addr("127.0.0.1");
     address.sin_port = htons(9123);
     len = sizeof(address);
+    for (int i = 0; i < 50000; i++) {
+        std::cout << "complete " << i << std::endl;
+        sockfd = socket(AF_INET, SOCK_STREAM, 0);
+        result = connect(sockfd, (struct sockaddr *)&address, len);
 
-    sockfd = socket(AF_INET, SOCK_STREAM, 0);
-    result = connect(sockfd, (struct sockaddr *)&address, len);
+        if (result == -1) {
+            perror("error: client");
+            exit(1);
+        }
 
-    if (result == -1) {
-        perror("error: client");
-        exit(1);
+        write(sockfd, &ch, 1);
+        read(sockfd, &rd, 1);
+        //printf("char from server = %c\n", rd);
+        close(sockfd);
+
     }
-
-    write(sockfd, &ch, 1);
-    std::cout << "waiting read" << std::endl;
-    read(sockfd, &rd, 1);
-    std::cout << "read complete!" << std::endl;
-    printf("char from server = %c\n", rd);
-    close(sockfd);
-
     return 0;
 }
+

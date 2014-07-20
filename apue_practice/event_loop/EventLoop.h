@@ -38,6 +38,9 @@ public:
         return sockfd_;
     }
 
+public:
+    static int count;
+
 protected:
     int sockfd_;
     epoll_event event_;
