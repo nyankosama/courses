@@ -1,0 +1,8 @@
+env = Environment(CCFLAGS = '-std=c++0x -g -p -Wall -O0')
+
+env.Program(
+    target = "server",
+    source = ["server.cpp", "EchoServer.cpp"],
+    LIBS = [File("/usr/lib/libmuduo_base_cpp11.a"), File("/usr/lib/libmuduo_net_cpp11.a"), "pthread"]
+)
+
